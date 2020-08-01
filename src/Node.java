@@ -69,4 +69,8 @@ public class Node implements Comparable<Node> {
     void incDegree (){
         this.degree += 1;
     }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
 }
