@@ -4,31 +4,55 @@
 import java.lang.reflect.Array;
 import java.util.*;
 
-class Graph {
+public class myGraph {
 
     LinkedList<Node> adj;
+
     Boolean visited[];
     ArrayList<Edge> Edges; // stores edges. useful for weighted graphs.
     ArrayList<ArrayList<Node>> Sets; // moallefe haye hambandi e graph injaan
 
-    Graph (int v){
+    myGraph (){
+
+        this.adj = new LinkedList<>();
+        this.Edges = new ArrayList<>();
+        this.Sets = new ArrayList<>();
+
+    }
+
+    void inputGraph(){
+        Scanner scanner = new Scanner(System.in);
+        int v = scanner.nextInt();
+        int e = scanner.nextInt();
+
+        /*inja chiz hayi ke too constructor boodan vali
+        * niaaz be int v baraye saxte shodan dashtan ro misazim.
+        * baqiasho hamoonja too constructor negah dashtam
+        * va constructor az Graph(int v) be shek e Graph() dar oomad.*/
+
         this.visited = new Boolean[v];
         for (int i = 0; i < v; i++) {
             this.visited[i] = false;
         }
-        this.adj = new LinkedList<>();
         for (int i=0; i<v; i++){
             Node node = new Node(i);
             this.adj.add(node);
         }
-        this.Edges = new ArrayList<>();
-        this.Sets = new ArrayList<>();
-
         // at first every Node is a moallefe ye hambandi
         for (int i =0; i<v; i++){
             ArrayList<Node> this_set = new ArrayList<>();
             this_set.add(this.adj.get(i));
             this.Sets.add(this_set);
+        }
+
+        /*ta inja oon dastan e balast.
+        * */
+
+        for (int i=0; i<e; i++){
+            int v1 = scanner.nextInt();
+            int v2 = scanner.nextInt();
+            int weight = scanner.nextInt();
+            this.addEdge(v1, v2, weight);
         }
     }
 
@@ -87,7 +111,14 @@ class Graph {
         this.adj.get(u).addNeighbour(this.adj.get(v));
         this.adj.get(v).addNeighbour(this.adj.get(u));
 
-        this.Edges.add(new Edge(this.getNode(u), this.getNode(v), weight));
+        this.getNode(u).incDegree();
+        this.getNode(v).incDegree();
+
+        Edge this_edge = new Edge(this.getNode(u), this.getNode(v), weight);
+        this.Edges.add(this_edge);
+
+        this.getNode(u).addEdge(this_edge);
+        this.getNode(v).addEdge(this_edge);
     }
 
     // A utility function to print the adjacency list
@@ -115,7 +146,6 @@ class Graph {
         }
         return result;
     }
-
 
     Node getNode(int v){
         return this.adj.get(v);

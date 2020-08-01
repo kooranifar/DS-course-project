@@ -1,8 +1,11 @@
 import org.graphstream.graph.*;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.*;
 
 public class Main {
     public static void main(String[] args) {
+
         Graph graph = new SingleGraph("Tutorial 1");
 
         graph.setStrict(false);

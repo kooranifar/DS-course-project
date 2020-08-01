@@ -8,4 +8,8 @@ public class Edge {
         this.weight = weight;
         this.visited = false;
     }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
 }
