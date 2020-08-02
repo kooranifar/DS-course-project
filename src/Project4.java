@@ -8,8 +8,6 @@ public class Project4 {
 
     public void displayGraph(myGraph graph, LinkedList<Node> S){
         Graph g = new SingleGraph("Project 4");
-        System.out.println("adj size is: " + graph.adj.size());
-        System.out.println("edge numbers is : " + graph.Edges.size());
 
         g.setStrict(false);
         g.setAutoCreate(true);
@@ -37,17 +35,8 @@ public class Project4 {
     public static void main(String[] args) {
 
         // input the graph
-        Scanner scanner = new Scanner(System.in);
-        int v = scanner.nextInt();
-        int e = scanner.nextInt();
-
-        myGraph graph = new myGraph(v);
-        for (int i=0; i<e; i++){
-            int v1 = scanner.nextInt();
-            int v2 = scanner.nextInt();
-            graph.addEdge(v1, v2, 1); // unweighted graphs we have
-        }
-        graph.printGraph();
+        myGraph graph = new myGraph();
+        graph.inputUnweightedGraph();
 
         LinkedList<Node> S = new LinkedList<>();
 
@@ -84,12 +73,13 @@ public class Project4 {
             }
         }
 
-        System.out.println("Set S is: {");
+        System.out.print("Set S is: { ");
         for (Node node : S) {
             System.out.print(node.value + ", ");
         }
         System.out.println("}");
 
+        // visualization: nodes in S are shown with red color
         Project4 o = new Project4(); o.displayGraph(graph, S);
 
     }

@@ -15,7 +15,22 @@ public class myGraph {
     ArrayList<Edge> Edges; // stores edges. useful for weighted graphs.
     ArrayList<ArrayList<Node>> Sets; // moallefe haye hambandi e graph injaan
 
-    myGraph (int v){
+    myGraph (){
+        this.adj = new LinkedList<>();
+        this.Edges = new ArrayList<>();
+        this.Sets = new ArrayList<>();
+    }
+
+    public void inputWeightedGraph(){
+        Scanner scanner = new Scanner(System.in);
+        int v = scanner.nextInt();
+        int e = scanner.nextInt();
+
+        /*inja chiz hayi ke too constructor boodan vali
+         * niaaz be int v baraye saxte shodan dashtan ro misazim.
+         * baqiasho hamoonja too constructor negah dashtam
+         * va constructor az Graph(int v) be shek e Graph() dar oomad.*/
+
         this.visited = new Boolean[v];
         for (int i = 0; i < v; i++) {
             this.visited[i] = false;
@@ -33,6 +48,55 @@ public class myGraph {
             ArrayList<Node> this_set = new ArrayList<>();
             this_set.add(this.adj.get(i));
             this.Sets.add(this_set);
+        }
+
+        /*ta inja oon dastan e balast.
+         * */
+
+        for (int i=0; i<e; i++){
+            int v1 = scanner.nextInt();
+            int v2 = scanner.nextInt();
+            int weight = scanner.nextInt();
+            this.addEdge(v1, v2, weight);
+        }
+    }
+
+    public void inputUnweightedGraph(){
+        Scanner scanner = new Scanner(System.in);
+        int v = scanner.nextInt();
+        int e = scanner.nextInt();
+
+        /*inja chiz hayi ke too constructor boodan vali
+         * niaaz be int v baraye saxte shodan dashtan ro misazim.
+         * baqiasho hamoonja too constructor negah dashtam
+         * va constructor az Graph(int v) be shek e Graph() dar oomad.*/
+
+        this.visited = new Boolean[v];
+        for (int i = 0; i < v; i++) {
+            this.visited[i] = false;
+        }
+        this.adj = new LinkedList<>();
+        for (int i=0; i<v; i++){
+            Node node = new Node(i);
+            this.adj.add(node);
+        }
+        this.Edges = new ArrayList<>();
+        this.Sets = new ArrayList<>();
+
+        // at first every Node is a moallefe ye hambandi
+        for (int i =0; i<v; i++){
+            ArrayList<Node> this_set = new ArrayList<>();
+            this_set.add(this.adj.get(i));
+            this.Sets.add(this_set);
+        }
+
+        /*ta inja oon dastan e balast.
+         * */
+
+        for (int i=0; i<e; i++){
+            int v1 = scanner.nextInt();
+            int v2 = scanner.nextInt();
+            this.addEdge(v1, v2, 1);
         }
     }
 
