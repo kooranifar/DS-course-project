@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Node implements Comparable<Node> {
+    NodeColor color;
     boolean visited;
     int value;
     int degree;
@@ -12,6 +13,7 @@ public class Node implements Comparable<Node> {
     LinkedList<Edge> connectedEdges; // stores all connected edges to the node
 
     public Node(int v) {
+        this.color = null;
         this.visited = false;
         this.degree = 0;
         this.neighbours = new LinkedList<>();

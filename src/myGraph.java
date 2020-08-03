@@ -203,4 +203,26 @@ public class myGraph {
     public Boolean[] getVisited() {
         return visited;
     }
+
+    public boolean isBipartite() {
+        for (int i = 0; i < this.Sets.size(); i++) {
+
+            Queue<Node> q = new LinkedList<>();
+            q.add(this.Sets.get(i).get(0)); // add first node of each partition to the queue
+
+            while (!q.isEmpty()) {
+                Node this_node = q.remove();
+                for (Node neighbour : this_node.getNeighbours()) {
+                    if (neighbour.color == null) {
+                        neighbour.color = this_node.color == NodeColor.BLUE ? NodeColor.RED : NodeColor.BLUE;
+                        q.add(neighbour);
+                    } else if (neighbour.color.equals(this_node.color)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
 }
