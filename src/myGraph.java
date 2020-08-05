@@ -1,24 +1,47 @@
 // Java code to demonstrate Graph representation
 // using ArrayList in Java
 
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
-
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class myGraph {
 
+    LinkedList<Node> redNodes;
+    LinkedList<Node> blueNodes;
+    int[][] adjMat;
     LinkedList<Node> adj;
-
     Boolean visited[];
     ArrayList<Edge> Edges; // stores edges. useful for weighted graphs.
     ArrayList<ArrayList<Node>> Sets; // moallefe haye hambandi e graph injaan
+
 
     myGraph (){
         this.adj = new LinkedList<>();
         this.Edges = new ArrayList<>();
         this.Sets = new ArrayList<>();
+        this.redNodes = new LinkedList<>();
+        this.blueNodes = new LinkedList<>();
+    }
+
+    myGraph (int v){
+        this.adjMat = new int[v][v];
+        this.visited = new Boolean[v];
+        for (int i = 0; i < v; i++) {
+            this.visited[i] = false;
+        }
+        this.adj = new LinkedList<>();
+        for (int i=0; i<v; i++){
+            Node node = new Node(i);
+            this.adj.add(node);
+        }
+        this.Edges = new ArrayList<>();
+        this.Sets = new ArrayList<>();
+
+        // at first every Node is a moallefe ye hambandi
+        for (int i =0; i<v; i++){
+            ArrayList<Node> this_set = new ArrayList<>();
+            this_set.add(this.adj.get(i));
+            this.Sets.add(this_set);
+        }
     }
 
     public void inputWeightedGraph(){
@@ -30,6 +53,8 @@ public class myGraph {
          * niaaz be int v baraye saxte shodan dashtan ro misazim.
          * baqiasho hamoonja too constructor negah dashtam
          * va constructor az Graph(int v) be shek e Graph() dar oomad.*/
+
+        this.adjMat = new int[v][v];
 
         this.visited = new Boolean[v];
         for (int i = 0; i < v; i++) {
@@ -57,6 +82,8 @@ public class myGraph {
             int v1 = scanner.nextInt();
             int v2 = scanner.nextInt();
             int weight = scanner.nextInt();
+
+            this.adjMat[v1][v2] = weight;
             this.addEdge(v1, v2, weight);
         }
     }
@@ -70,6 +97,8 @@ public class myGraph {
          * niaaz be int v baraye saxte shodan dashtan ro misazim.
          * baqiasho hamoonja too constructor negah dashtam
          * va constructor az Graph(int v) be shek e Graph() dar oomad.*/
+
+        this.adjMat = new int[v][v];
 
         this.visited = new Boolean[v];
         for (int i = 0; i < v; i++) {
@@ -96,8 +125,69 @@ public class myGraph {
         for (int i=0; i<e; i++){
             int v1 = scanner.nextInt();
             int v2 = scanner.nextInt();
+            this.adjMat[v1][v2] = 1;
             this.addEdge(v1, v2, 1);
         }
+    }
+
+    public myGraph networkFlow(){
+        myGraph g = new myGraph();
+
+        int v = this.adj.size() + 2;
+        int e = this.Edges.size() + this.blueNodes.size() + this.redNodes.size();
+
+        /*inja chiz hayi ke too constructor boodan vali
+         * niaaz be int v baraye saxte shodan dashtan ro misazim.
+         * baqiasho hamoonja too constructor negah dashtam
+         * va constructor az Graph(int v) be shek e Graph() dar oomad.*/
+
+        g.adjMat = new int[v][v];
+
+        g.visited = new Boolean[v];
+        for (int i = 0; i < v; i++) {
+            g.visited[i] = false;
+        }
+        g.adj = new LinkedList<>();
+        for (int i=0; i<v; i++){
+            Node node = new Node(i);
+            g.adj.add(node);
+        }
+        g.Edges = new ArrayList<>();
+        g.Sets = new ArrayList<>();
+
+        // at first every Node is a moallefe ye hambandi
+        for (int i =0; i<v; i++){
+            ArrayList<Node> this_set = new ArrayList<>();
+            this_set.add(g.adj.get(i));
+            g.Sets.add(this_set);
+        }
+
+        /*ta inja oon dastan e balast.
+         * */
+
+        // add edge from source to first part of the graph
+        for (Node redNode : this.redNodes) {
+            g.adjMat[0][redNode.value + 1] = 1;
+            g.addEdge(0, redNode.value + 1, 1);
+        }
+
+        // add edge from sink to second part of the graph
+        for (Node blueNode : this.blueNodes) {
+            g.adjMat[blueNode.value + 1][v-1] = 1;
+            g.addEdge(blueNode.value + 1, v-1, 1);
+        }
+
+        // rest of the graph is the same as main graph
+        for (int i = 0; i < v - 2; i++) {
+            for (int j = 0; j < v - 2; j++) {
+                g.adjMat[i+1][j+1] = this.adjMat[i][j];
+            }
+        }
+        for (Edge edge : this.Edges) {
+            g.addEdge(edge.src.value + 1, edge.dest.value + 1, 1);
+        }
+
+        return g;
     }
 
 
@@ -172,9 +262,8 @@ public class myGraph {
     void printGraph()
     {
         for (int i = 0; i < this.adj.size(); i++) {
-            System.out.println("\nAdjacency list of vertex" + i);
-            for (int j = 0; j < this.adj.get(i).getNeighbours().size(); j++) {
-                System.out.print(" -> "+ this.adj.get(i).getNeighbours().get(j).getValue());
+            for (int j = 0; j < this.adj.size(); j++) {
+                System.out.print(this.adjMat[i][j] + " ");
             }
             System.out.println();
         }
@@ -214,7 +303,14 @@ public class myGraph {
                 Node this_node = q.remove();
                 for (Node neighbour : this_node.getNeighbours()) {
                     if (neighbour.color == null) {
-                        neighbour.color = this_node.color == NodeColor.BLUE ? NodeColor.RED : NodeColor.BLUE;
+                        if (this_node.color == NodeColor.BLUE){
+                            neighbour.color = NodeColor.RED;
+                            this.redNodes.add(neighbour);
+                        }
+                        else {
+                            neighbour.color = NodeColor.BLUE;
+                            this.blueNodes.add(neighbour);
+                        }
                         q.add(neighbour);
                     } else if (neighbour.color.equals(this_node.color)) {
                         return false;
@@ -223,6 +319,116 @@ public class myGraph {
             }
         }
         return true;
+    }
+
+    // changes the direction of all edges from RED edges to BLUE edges.
+    public void improveDirections() {
+
+        for (Edge edge : this.Edges) {
+            Node src = edge.src;
+            Node dest = edge.dest;
+            if ( this.blueNodes.contains(src) && this.redNodes.contains(dest)) {
+                // Edge should be reversed
+                edge.setSrc(dest);
+                edge.setDest(src);
+
+                this.adjMat[src.value][dest.value] = 0;
+                this.adjMat[dest.value][src.value] = edge.weight;
+            }
+        }
+    }
+
+    boolean BFS(int[][] rGraph, int t, int[] parent)
+    {
+        // Create a visited array and mark all vertices as not
+        // visited
+        boolean[] visited = new boolean[this.adj.size()];
+        for(int i=0; i<this.adj.size(); ++i)
+            visited[i]=false;
+
+        // Create a queue, enqueue source vertex and mark
+        // source vertex as visited
+        LinkedList<Integer> queue = new LinkedList<>();
+        queue.add(0);
+        visited[0] = true;
+        parent[0]=-1;
+
+        // Standard BFS Loop
+        while (queue.size()!=0)
+        {
+            int u = queue.poll();
+
+            for (int v=0; v<this.adj.size(); v++)
+            {
+                if (!visited[v] && rGraph[u][v] > 0)
+                {
+                    queue.add(v);
+                    parent[v] = u;
+                    visited[v] = true;
+                }
+            }
+        }
+
+        // If we reached sink in BFS starting from source, then
+        // return true, else false
+        return (visited[t]);
+    }
+
+    // for Project3. creates a network flow graph GPrime and residual for it GRes
+    int fordFulkerson()
+    {
+        int u, v;
+
+        // Create a residual graph and fill the residual graph
+        // with given capacities in the original graph as
+        // residual capacities in residual graph
+
+        // Residual graph where rGraph[i][j] indicates
+        // residual capacity of edge from i to j (if there
+        // is an edge. If rGraph[i][j] is 0, then there is
+        // not)
+        int[][] rGraph = new int[this.adj.size()][this.adj.size()];
+
+        for (u = 0; u < this.adj.size(); u++)
+            for (v = 0; v < this.adj.size(); v++)
+                rGraph[u][v] = this.adjMat[u][v];
+
+        // This array is filled by BFS and to store path
+        int[] parent = new int[this.adj.size()];
+
+        int max_flow = 0;  // There is no flow initially
+
+        // Augment the flow while tere is path from source
+        // to sink
+        while (BFS(rGraph, this.adj.size()-1 , parent))
+        {
+            // Find minimum residual capacity of the edhes
+            // along the path filled by BFS. Or we can say
+            // find the maximum flow through the path found.
+            int path_flow = Integer.MAX_VALUE;
+            for (v=this.adj.size()-1; v!=0; v=parent[v])
+            {
+                u = parent[v];
+                path_flow = Math.min(path_flow, rGraph[u][v]);
+            }
+
+            // update residual capacities of the edges and
+            // reverse edges along the path
+            for (v=this.adj.size()-1; v != 0; v=parent[v])
+            {
+                u = parent[v];
+                rGraph[u][v] -= path_flow;
+                rGraph[v][u] += path_flow;
+
+                this.getEdge(this.getNode(u), this.getNode(v)).alterVisited();
+            }
+
+            // Add path flow to overall flow
+            max_flow += path_flow;
+        }
+
+        // Return the overall flow
+        return max_flow;
     }
 
 }
