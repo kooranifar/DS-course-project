@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 public class Project3 {
 
-    public void displayGraph(myGraph graph){
+    public void displayGraph(myGraph graph, myGraph networkFlow){
         Graph g = new SingleGraph("Project 3");
 
         g.setStrict(false);
@@ -23,7 +23,13 @@ public class Project3 {
             node.addAttribute("ui.label", node.getId());
         }
 
-
+        for (int i = 0; i < graph.Edges.size(); i++) {
+            Edge this_edge = graph.Edges.get(i);
+            org.graphstream.graph.Edge edge = g.getEdge(String.valueOf(graph.Edges.get(i).src.value) + String.valueOf(graph.Edges.get(i).dest.value));
+            if (networkFlow.getEdge(networkFlow.getNode(this_edge.src.value+1), networkFlow.getNode(this_edge.dest.value+1)).visited){
+                edge.addAttribute("ui.style", "fill-color: rgb(0,100,255);");
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -44,11 +50,12 @@ public class Project3 {
 
             for (Edge edge : NF.Edges) {
                 if (edge.visited && edge.src.value!=0 && edge.dest.value!=NF.adj.size()-1){
+                    graph.getEdge(edge.src, edge.dest).setVisited(true);
                     System.out.println((edge.src.value - 1)  + " " + (edge.dest.value - 1));
                 }
             }
 
-            Project3 o = new Project3(); o.displayGraph(NF);
+            Project3 o = new Project3(); o.displayGraph(graph, NF);
 
         }
     }

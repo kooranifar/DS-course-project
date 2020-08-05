@@ -404,7 +404,7 @@ public class myGraph {
                 this.getEdge(this.getNode(u), this.getNode(v)).alterVisited();
             }
 
-            // Add path flow to overall flow
+            // add path flow to overall flow
             max_flow += path_flow;
         }
     }
