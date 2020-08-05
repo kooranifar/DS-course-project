@@ -22,6 +22,8 @@ public class Project3 {
         for (org.graphstream.graph.Node node : g) {
             node.addAttribute("ui.label", node.getId());
         }
+
+
     }
 
     public static void main(String[] args) {
@@ -46,7 +48,7 @@ public class Project3 {
                 }
             }
 
-//            Project3 o = new Project3(); o.displayGraph(NF);
+            Project3 o = new Project3(); o.displayGraph(NF);
 
         }
     }
